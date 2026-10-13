@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>10大未來人才｜互動泡泡圖 v4</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:Inter,"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#ffffff;color:#0f172a}
+#talentMap{max-width:960px;margin:0 auto;background:#ffffff;padding:28px 20px 18px;overflow-x:hidden}
+.header{text-align:center;margin-bottom:12px}
+.header h1{margin:0;font-size:clamp(28px,4vw,44px);line-height:1.15;color:#125ea8;font-weight:900}
+.header .sub{margin-top:10px;color:#7c8696;font-size:clamp(13px,1.8vw,18px);line-height:1.6}
+.grid{margin:28px auto 6px;max-width:900px;display:grid;grid-template-columns:repeat(6,1fr);gap:26px 20px;align-items:start;justify-items:center}
+.item{width:100%;display:flex;flex-direction:column;align-items:center;min-width:0}
+.bubble{width:126px;height:126px;border-radius:50%;border:3px solid var(--ring);background:#f5f5f5;box-shadow:0 2px 6px rgba(15,23,42,.04), inset 0 1px 0 rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease, background .18s ease}
+.bubble:hover,.bubble:focus-visible{transform:translateY(-2px);box-shadow:0 8px 18px rgba(15,23,42,.10);outline:none;background:#fff}
+.bubble.active{background:#fff;box-shadow:0 10px 22px rgba(15,23,42,.12)}
+.icon{width:56px;height:56px}
+.label{margin-top:10px;text-align:center;color:var(--ring);font-size:16px;line-height:1.35;font-weight:800;min-height:44px;max-width:132px;word-break:break-word}
+.note{margin:18px auto 0;max-width:860px;background:#ffffff;border:1px solid #dde2e8;border-radius:18px;padding:16px 16px 14px;box-shadow:0 8px 18px rgba(15,23,42,.04);display:none;overflow:hidden}
+.note.show{display:block}
+.noteHead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid #e5e7eb}
+.counter{color:#125ea8;font-size:13px;font-weight:900}
+.topline{font-size:14px;font-weight:900;color:#7c3aed;line-height:1.45}
+.note h2{margin:12px 0 4px;font-size:clamp(22px,3vw,32px);color:#0f172a;line-height:1.3}
+.headline{font-size:16px;font-weight:900;color:#125ea8;margin-bottom:8px}
+.scene{font-size:14px;line-height:1.8;color:#334155;margin-bottom:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tab{min-height:40px;padding:8px 12px;border-radius:999px;cursor:pointer;border:1px solid #d0d7df;background:#f8fafc;color:#334155;font-weight:800;font-size:14px}
+.tab.active{background:#125ea8;color:#fff;border-color:#125ea8}
+.industryTitle{font-size:18px;font-weight:900;color:#0f172a;margin-bottom:10px}
+.jobs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.job{background:#f8fafc;border:1px solid #e2e8f0;border-radius:16px;padding:12px;min-width:0}
+.jobTitle{font-size:14px;font-weight:900;color:#0f172a;line-height:1.45;margin-bottom:7px}
+.jobDesc{font-size:12px;line-height:1.65;color:#334155;word-break:break-word}
+.jobMajor{margin-top:7px;font-size:12px;line-height:1.6;color:#125ea8;font-weight:700;word-break:break-word}
+.foot{font-size:11px;color:#64748b;line-height:1.6;margin-top:10px}
+@media (min-width:769px){.item.pos7{grid-column:1}.item.pos8{grid-column:2}.item.pos9{grid-column:3}.item.pos10{grid-column:4}}
+@media (max-width:768px){
+  #talentMap{padding:18px 10px 12px}
+  .header h1{font-size:30px}
+  .header .sub{font-size:14px;line-height:1.55}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 8px;max-width:100%;margin-top:20px}
+  .bubble{width:104px;height:104px;border-width:2.5px}
+  .icon{width:46px;height:46px}
+  .label{font-size:13px;min-height:36px;max-width:112px;margin-top:8px;line-height:1.3}
+  .note{margin-top:14px;padding:12px;border-radius:16px}
+  .noteHead{align-items:flex-start}
+  .topline{font-size:12px}
+  .tab{font-size:13px;padding:8px 10px;min-height:38px;white-space:nowrap}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .tabs::-webkit-scrollbar{height:6px}
+  .tabs::-webkit-scrollbar-thumb{background:#d0d7df;border-radius:999px}
+  .industryTitle{font-size:17px;line-height:1.45}
+  .jobs{grid-template-columns:1fr}
+  .job{padding:11px}
+}
+svg{display:block;width:100%;height:100%}
+</style>
+</head>
+<body>
+<section id="talentMap">
+  <div class="header">
+    <h1>未來產業人才領域地圖</h1>
+    <div class="sub">點擊下方圖示，探索各領域關連的 30 個產業、90 種未來職務</div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <section class="note" id="detail">
+    <div class="noteHead">
+      <div>
+        <div class="counter" id="counter"></div>
+        <div class="topline">10 大未來人才 × 30 個產業 × 90 種未來職務</div>
+      </div>
+      <button class="tab" type="button" id="closeBtn">返回地圖</button>
+    </div>
+    <h2 id="talentTitle"></h2>
+    <div class="headline" id="talentHeadline"></div>
+    <div class="scene" id="talentScene"></div>
+    <div class="tabs" id="tabs"></div>
+    <div id="industryPanel"></div>
+    <div class="foot">資料來源：《遠見雜誌》2026 年 10 月人才特刊。部分職稱為依未來工作內容命名，未必為目前普遍使用的正式招募名稱。</div>
+  </section>
+</section>
+<script>
+const DATA = [{"id": 1, "name": "智慧生活應用暨元件人才", "headline": "半導體×AI，讓生活長出智慧神經", "scenario": "當AI代理人、邊緣運算與先進封裝走進日常，半導體不再只是零組件，而是每一個智慧場景的感知與決策中樞。從穿戴裝置到自動駕駛，未來人才必須同時懂硬體、軟體與使用者情境，讓科技真正融入生活。", "sectors": [{"id": 1, "name": "先進半導體與元件產業", "jobs": [{"id": 1, "name": "晶粒與先進封裝整合工程師", "description": "整合Chiplet、3D封裝與高速互連，讓異質晶片協同運算", "majors": "電機、電子、材料"}, {"id": 2, "name": "矽光子元件工程師", "description": "開發以光傳輸資料的元件，提升AI資料中心與通訊效率", "majors": "光電、電機、物理"}, {"id": 3, "name": "邊緣AI硬體協同設計師", "description": "把模型壓縮、低功耗晶片與感測器整合到終端裝置", "majors": "資工、電機、資訊工程"}]}, {"id": 2, "name": "智慧製造與工業AI產業", "jobs": [{"id": 4, "name": "工業AI代理架構師", "description": "設計能協助排程、診斷與決策的工業AI代理系統", "majors": "資工、機械、工業工程"}, {"id": 5, "name": "工廠數位孿生營運長", "description": "以即時數據維護工廠虛擬模型，提前預測瓶頸與停機風險", "majors": "工業工程、資工、"}, {"id": 6, "name": "機器視覺與協作機器人安全工程師", "description": "系統科學", "majors": "電機、自動化、機械"}]}, {"id": 3, "name": "金融科技與數位信任產業", "jobs": [{"id": 7, "name": "AI金融產品治理經理", "description": "規劃生成式AI金融產品，兼顧可解釋性、隱私與法遵", "majors": "資管、資工、財金"}, {"id": 8, "name": "即時支付風險模型工程師", "description": "利用串流數據辨識詐欺交易，讓支付在毫秒內完成風險判斷", "majors": "應數、資工、財金"}, {"id": 9, "name": "代幣化資產合規專家", "description": "管理數位資產、穩定幣與鏈上金融服務的合規風險", "majors": "財金、法律、資安"}]}]}, {"id": 2, "name": "資訊安全暨算力人才", "headline": "用AI治AI，築起後資訊時代防線", "scenario": "雲端、邊緣裝置與AI代理人，讓攻擊面持續擴大，資安已從資訊部門的工作，變成企業韌性與國家安全的共同語言。未來的人才要能讓AI協助防禦，也要能驗證AI不會成為新的破口，並把量子與國防科技轉化為可落地的安全能力。", "sectors": [{"id": 4, "name": "網路資安產業", "jobs": [{"id": 10, "name": "身分優先零信任架構師", "description": "以身分、裝置狀態與行為風險做連續驗證，重建企業安全邊界", "majors": "資工、資安、網路工程"}, {"id": 11, "name": "雲端威脅獵捕與紫隊工程師", "description": "在雲端環境模擬攻擊並追蹤異常行為，縮短偵測與回應時間", "majors": "資安、資工、資訊管理"}, {"id": 12, "name": "AI紅隊與事件應變策略師", "description": "測試生成式AI與代理系統的攻擊面，制定跨部門應變劇本", "majors": "資工、資安、企管"}]}, {"id": 5, "name": "量子科技產業", "jobs": [{"id": 13, "name": "量子演算法工程師", "description": "設計可在量子與混合運算環境執行的最佳化與模擬演算法", "majors": "應數、物理、資工"}, {"id": 14, "name": "低溫量子硬體工程師", "description": "建置低溫控制、量子晶片與量測系統，提升量子運算穩定度", "majors": "物理、電機、材料科學"}, {"id": 15, "name": "後量子密碼遷移架構師", "description": "協助組織盤點密碼資產，導入可抵抗量子攻擊的新一代加密", "majors": "數學、資安、物理"}]}, {"id": 6, "name": "國防科技產業", "jobs": [{"id": 16, "name": "自主系統資安工程師", "description": "保護無人機、無人車與自主系統的感測、通訊與控制鏈路", "majors": "資安、資工、航空工程"}, {"id": 17, "name": "韌性戰術通訊工程師", "description": "設計可在干擾與斷網環境維持運作的加密通訊系統", "majors": "電機、通訊工程、資安"}, {"id": 18, "name": "國防AI驗證與模擬官", "description": "驗證國防AI的可靠性、偏誤與安全邊界，建立決策模擬環境", "majors": "資工、人工智慧、"}]}]}, {"id": 3, "name": "永續暨綠能人才", "headline": "串起能源、財會與環工，打造低碳生活", "scenario": "企業面對的不只是減碳承諾，而是能源成本、碳資料與供應鏈規範的同步壓力。再生能源與儲能工程師要讓電力更穩定，碳金融人才要讓減碳投資可衡量，綠色建築人才則要把城市改造成能適應極端氣候的生活系統。", "sectors": [{"id": 7, "name": "再生能源產業", "jobs": [{"id": 19, "name": "海上風電與漂浮式基礎工程師", "description": "規劃海上風場、漂浮式基礎與海域施工維運", "majors": "機械、能源工程、土木"}, {"id": 20, "name": "綠氫系統整合工程師", "description": "整合電解、儲氫、運輸與終端應用，建立可擴充的氫能系統", "majors": "化工、能源工程、材料"}, {"id": 21, "name": "再生能源數位孿生運維師", "description": "用預測模型管理風光儲能設備，提升發電效率與維修決策", "majors": "電機、能源、資工"}]}, {"id": 8, "name": "碳金融產業", "jobs": [{"id": 22, "name": "碳市場風險交易師", "description": "分析碳價、政策與產業暴露，設計碳權與減碳資產的交易策略", "majors": "財金、經濟、環境管理"}, {"id": 23, "name": "轉型金融分析師", "description": "評估企業轉型路徑、氣候風險與投資可行性，串聯資金與減碳", "majors": "財金、企管、會計"}, {"id": 24, "name": "產品碳足跡會計師", "description": "建立從原料到回收的碳資料，支援查證、揭露與供應鏈管理", "majors": "會計、環境管理、"}]}, {"id": 9, "name": "綠色建築產業", "jobs": [{"id": 25, "name": "淨零建築改造設計師", "description": "將既有建築轉為節能、低碳並能回應氣候風險的空間", "majors": "建築、環工、都市規劃"}, {"id": 26, "name": "建築能源管理工程師", "description": "整合空調、照明、儲能與感測資料，持續優化建築能效", "majors": "能源工程、工業工程、"}, {"id": 27, "name": "氣候韌性城市規劃師", "description": "電機", "majors": "都市計畫、資工、"}]}]}, {"id": 4, "name": "生技資材暨科技應用人才", "headline": "農業、海洋與生技相遇，開啟產業新藍海", "scenario": "面對極端氣候、糧食安全與原料波動，農業、海洋與食品不再只是傳統產業，而是資料、材料與生物技術的應用場。未來人才要把感測器、AI、細胞培養與供應鏈管理串接，讓食物更安全、資源更有效率，也讓一級產業創造新的出口。", "sectors": [{"id": 10, "name": "智慧農業產業", "jobs": [{"id": 28, "name": "精準農業AI規劃師", "description": "整合土壤、氣象與作物數據，制定分區栽培與用水策略", "majors": "農業科技、資工、統計"}, {"id": 29, "name": "農業機器人與無人機任務設計師", "description": "規劃農業機器人與無人機的巡田、播種、施作與監測任務", "majors": "農機、資工、航空工程"}, {"id": 30, "name": "環控農場系統工程師", "description": "管理室內農場的光照、溫濕度、營養液與能源系統", "majors": "農業科技、機電、環工"}]}, {"id": 11, "name": "海洋產業", "jobs": [{"id": 31, "name": "藍碳生態復育規劃師", "description": "設計紅樹林、海草床與養殖共生的藍碳復育方案", "majors": "海洋科學、水產養殖、"}, {"id": 32, "name": "海洋生物資訊產品開發師", "description": "環境工程", "majors": "生科、海洋科學、"}, {"id": 33, "name": "智慧養殖系統工程師", "description": "將海洋生物資料轉化為新藥、材料與食品的研發線索", "majors": "水產養殖、資工、電機"}]}, {"id": 12, "name": "食品科技產業", "jobs": [{"id": 34, "name": "精準發酵製程研發員", "description": "以微生物與細胞培養製造替代蛋白、機能成分與新型食品原料", "majors": "食品科學、化工、生科"}, {"id": 35, "name": "食品供應鏈追溯資料架構師", "description": "建立從產地、加工到通路的食品安全與來源追溯系統", "majors": "食品科學、資工、統計"}, {"id": 36, "name": "個人化營養產品經理", "description": "依據健康數據與飲食需求，規劃個人化營養與保健產品", "majors": "食品科學、營養、行銷"}]}]}, {"id": 5, "name": "大健康與樂齡人才", "headline": "從長壽到自主，延長人生選擇權", "scenario": "健康照護將從醫院延伸到家庭、社區與工作場所，照顧不只是把人送進機構，而是協助每個人維持自主生活。未來的人才要懂長照服務、健康數據與心理支持，讓科技成為照顧者的助手，也讓高齡者能繼續運動、工作、學習與社交。", "sectors": [{"id": 13, "name": "長照產業", "jobs": [{"id": 37, "name": "高齡居家科技整合師", "description": "把感測器、照護服務與家屬溝通整合成可使用的居家照護方案", "majors": "長照、資工、公共衛生"}, {"id": 38, "name": "樂齡社區營運經理", "description": "管理結合醫療、住宅、餐飲與社交活動的高齡友善社區", "majors": "長照、社工、企管"}, {"id": 39, "name": "高齡功能訓練教練", "description": "依肌力、平衡與認知狀態設計可持續的運動與復能課程", "majors": "運動科學、物理治療、"}]}, {"id": 14, "name": "健康科技產業", "jobs": [{"id": 40, "name": "遠距照護流程設計師", "description": "設計跨院所、家庭與照顧者都能順暢使用的遠距照護流程", "majors": "醫學資訊、資工、"}, {"id": 41, "name": "多模態健康數據分析師", "description": "公共衛生", "majors": "生醫工程、統計、資工"}, {"id": 42, "name": "臨床AI導入專員", "description": "整合穿戴裝置、影像與生活紀錄，找出個人健康風險訊號", "majors": "醫學、生物資訊、生科"}]}, {"id": 15, "name": "心理健康產業", "jobs": [{"id": 43, "name": "數位心理健康方案設計師", "description": "規劃線上諮商、數位療法與自助工具的完整服務體驗", "majors": "心理、社工、公共衛生"}, {"id": 44, "name": "職場韌性與心理健康顧問", "description": "協助企業建立壓力管理、心理安全與復原力支持系統", "majors": "心理、企管、人資"}, {"id": 45, "name": "AI輔助治療安全研究員", "description": "評估AI心理工具的療效、偏誤與風險，建立安全使用規範", "majors": "心理、資工、生醫工程"}]}]}, {"id": 6, "name": "地緣政經暨跨境協商人才", "headline": "黑天鵝年代，把風險轉成選項", "scenario": "供應鏈重組、科技管制與能源安全，讓企業每天都在面對跨國決策。未來的跨境人才不只會翻譯語言，更要讀懂政策、數據與文化，協助企業在危機中找到替代方案，也讓政府、國際組織與民間社會，能把複雜利益談成共同行動。", "sectors": [{"id": 16, "name": "國際貿易產業", "jobs": [{"id": 46, "name": "供應鏈情境推演分析師", "description": "模擬制裁、關稅、航運與供應中斷情境，提出備援布局", "majors": "國貿、企管、經濟"}, {"id": 47, "name": "跨境關務資料協調師", "description": "整合報關、原產地、物流與法規資料，降低跨境交易摩擦", "majors": "國貿、外語、物流"}, {"id": 48, "name": "地緣政治情報顧問", "description": "追蹤政局、法規與社會風險，轉化為企業的投資與營運建議", "majors": "政治、國際關係、資料"}]}, {"id": 17, "name": "外交與國際組織", "jobs": [{"id": 49, "name": "氣候與安全談判促進師", "description": "協助多方在氣候、能源與安全議題上建立共同語言與交換方案", "majors": "外交、政治、法律"}, {"id": 50, "name": "跨境人道創新專案經理", "description": "規劃國際合作與人道科技專案，串聯政府、企業與NGO資源", "majors": "社會學、國際關係、企管"}, {"id": 51, "name": "數位治理政策研究員", "description": "研究AI、數據、平台與永續政策，提出可執行的國際治理建議", "majors": "公共政策、環境科學、"}]}, {"id": 18, "name": "跨國企業管理產業", "jobs": [{"id": 52, "name": "全球人才流動與文化整合顧問", "description": "設計跨國派任、遠距協作與多文化團隊的整合機制", "majors": "人資、外語、國際企業"}, {"id": 53, "name": "AI與跨境法規遵循架構師", "description": "管理", "majors": "法律、國際商務、資工"}, {"id": 54, "name": "跨境併購整合策略師", "description": "把各國AI、資料、出口管制與隱私規範嵌入企業流程", "majors": "財金、法律、企管"}]}]}, {"id": 7, "name": "文創與觀旅人才", "headline": "AI加速創作，文化決定人們為何留下", "scenario": "生成式AI能快速產出影像與聲音，卻不能替文化做出選擇。未來的文創與觀旅人才，要把地方記憶、品牌敘事與空間科技結合，讓觀眾從看內容變成參與故事，讓一座城市不只被打卡，更能被理解、分享、再次造訪。", "sectors": [{"id": 19, "name": "影視產業", "jobs": [{"id": 55, "name": "虛擬製作內容監製", "description": "統籌LED虛擬攝影棚、即時引擎與AI工具，完成跨平台影像內容", "majors": "傳播、電影、企管"}, {"id": 56, "name": "沉浸式敘事導演", "description": "設計讓觀眾能選擇、互動與共創的劇場及展演作品", "majors": "戲劇、藝術、設計"}, {"id": 57, "name": "生成式影像版權編輯", "description": "管理AI影像素材、訓練資料與創作者權利，確保內容可使用與追溯", "majors": "中文、傳播、法律"}]}, {"id": 20, "name": "遊戲與XR產業", "jobs": [{"id": 58, "name": "空間運算體驗設計師", "description": "設計結合AR、VR與混合實境的遊戲、教育與商業體驗", "majors": "設計、資工、互動科技"}, {"id": 59, "name": "互動敘事設計師", "description": "建構可分支、可持續更新的遊戲世界觀與角色故事", "majors": "中文、傳播、遊戲設計"}, {"id": 60, "name": "虛擬世界IP品牌製作人", "description": "將角色、社群與商品整合成可長期經營的虛擬品牌", "majors": "行銷、設計、傳播"}]}, {"id": 21, "name": "觀光文創產業", "jobs": [{"id": 61, "name": "文化資料策展人", "description": "把地方文史、數位典藏與社群故事轉化為可參與的展演內容", "majors": "藝術管理、歷史、文化"}, {"id": 62, "name": "再生觀光體驗規劃師", "description": "研究", "majors": "觀光、環境、行銷"}, {"id": 63, "name": "地方文化內容策略師", "description": "設計兼顧居民、環境與旅客的低衝擊旅遊路線與服務", "majors": "行銷、觀光、傳播"}]}]}, {"id": 8, "name": "知識升級暨管理人才", "headline": "讓知識流動，成為組織進化的基礎", "scenario": "AI讓知識取得變快，卻也讓錯誤、偏見與技能落差更快擴散。未來的知識管理人才，必須設計人與AI共同學習的環境，協助企業重組流程、保存關鍵經驗，並把多元共融、持續學習與變革溝通，變成每天都能運作的管理能力。", "sectors": [{"id": 22, "name": "教育科技產業", "jobs": [{"id": 64, "name": "AI協作學習體驗架構師", "description": "建立產品從原料到回收的碳資料，支援查證、揭露與供應鏈管理", "majors": "教育、資工、心理"}, {"id": 65, "name": "終身學習產品經理", "description": "規劃跨年齡、跨職涯的學習產品與技能認證路徑", "majors": "教育、企管、傳播"}, {"id": 66, "name": "學習分析與評量科學家", "description": "用學習數據改善教學設計，建立兼顧能力與公平性的評量", "majors": "教育、統計、資工"}]}, {"id": 23, "name": "管理顧問產業", "jobs": [{"id": 67, "name": "AI轉型營運模式顧問", "description": "協助企業把AI嵌入流程、組織與績效制度，而不只是購買工具", "majors": "企管、國際企業管理、資管"}, {"id": 68, "name": "人機協作策略師", "description": "重新設計人與AI代理的分工，找出可擴張且負責任的新工作模式", "majors": "企管、設計思考學程、資工"}, {"id": 69, "name": "企業知識圖譜策展師", "description": "整理組織經驗、文件與專家網絡，建立可搜尋與驗證的知識系統", "majors": "資管、圖資、企管"}]}, {"id": 24, "name": "綠色建築產業", "jobs": [{"id": 70, "name": "共融與歸屬感專案經理", "description": "把DEI從口號轉為招募、升遷、協作與決策的日常制度", "majors": "人資、心理、社會學"}, {"id": 71, "name": "職能再培訓架構師", "description": "依產業變化設計技能地圖、內訓課程與轉職學習路徑", "majors": "教育、企管、人資"}, {"id": 72, "name": "變革採用與AI治理教練", "description": "陪伴組織在導入AI與制度變革時，建立信任、責任與使用習慣", "majors": "企管、心理、資訊管理"}]}]}, {"id": 9, "name": "智慧藍領人才", "headline": "黑手變神手，現場能力在AI時代更稀缺", "scenario": "電動車、智慧物流與韌性基建，都需要真正能在現場解決問題的人。未來的藍領工作，會與軟體、感測器、機器人和數位孿生密切合作，專業價值不只在於操作設備，更在於判斷異常、確保安全，並把經驗轉成下一代系統能理解的資料。", "sectors": [{"id": 25, "name": "電動車產業", "jobs": [{"id": 73, "name": "電動車診斷與軟體校準技師", "description": "利用診斷工具檢修高壓系統、電控軟體與車載網路", "majors": "車輛工程、機械、電機"}, {"id": 74, "name": "動力電池二次生命流程專員", "description": "評估退役電池狀態，規劃梯次利用、拆解與回收流程", "majors": "化工、材料、環工"}, {"id": 75, "name": "充電網路現場服務工程師", "description": "建置、檢修與遠端監控充電站，維持車主可用的充電服務", "majors": "電機、土木、資訊工程"}]}, {"id": 26, "name": "智慧物流產業", "jobs": [{"id": 76, "name": "自主倉儲整合工程師", "description": "整合AMR、機械手臂、倉儲系統與現場作業流程", "majors": "工業工程、資工、機械"}, {"id": 77, "name": "冷鏈可視化管理師", "description": "監控溫度、位置與貨況，找出冷鏈斷點，並改善配送品質", "majors": "物流、食品科學、工業工程"}, {"id": 78, "name": "低空物流運控專員", "description": "管理無人機與低空航線的派送任務、風險與場站協同", "majors": "航空工程、資工、物流"}]}, {"id": 27, "name": "基礎設施工程產業", "jobs": [{"id": 79, "name": "基礎設施感測與孿生工程師", "description": "以感測器、影像與數位孿生監測橋梁、道路與管線狀態", "majors": "土木、運輸工程、資工"}, {"id": 80, "name": "氣候韌性施工管理師", "description": "管理抗洪、耐熱、耐震與低碳建築工程的現場品質", "majors": "土木、建築、環工"}, {"id": 81, "name": "工地機器人現場技師", "description": "操作與維護測量、搬運、巡檢與施工機器人", "majors": "機械、自動化、營建"}]}]}, {"id": 10, "name": "智庫與傳播N.0人才", "headline": "把複雜說清楚，就能化理解為行動", "scenario": "資訊愈多，愈需要有人把證據、觀點與情感說清楚。AI短影音與生成式內容會讓製作速度大幅提升，但真正稀缺的是判斷、查證與敘事。未來的智庫與傳播人才，將在媒體、企業、政府與教育現場之間，協助人們理解複雜議題，並做出更好的選擇。", "sectors": [{"id": 28, "name": "新媒體產業", "jobs": [{"id": 82, "name": "AI短影音內容製作人", "description": "以AI協助腳本、剪輯與多平台分發，同時維持查證與編輯品質", "majors": "傳播、設計、資工"}, {"id": 83, "name": "充電網路現場服務工程師", "description": "把品牌價值轉成可持續更新的故事架構、內容模板與社群語言", "majors": "傳播、行銷、中文"}, {"id": 84, "name": "沉浸式新聞體驗製作人", "description": "用空間影像、互動資料與聲音，讓觀眾理解複雜新聞現場", "majors": "新聞、傳播、互動科技"}]}, {"id": 29, "name": "公關與行銷產業", "jobs": [{"id": 85, "name": "危機溝通與錯假訊息顧問", "description": "在突發事件中整合事實、利害關係人與回應節奏，降低信任損耗", "majors": "傳播、企管、法律"}, {"id": 86, "name": "永續主張與品牌信任策略師", "description": "把企業永續行動轉成可查證、理解且不誇大的品牌溝通", "majors": "行銷、企管、環境政策"}, {"id": 87, "name": "社群輿情與合成內容分析師", "description": "辨識社群情緒、協同行為與AI生成內容，提供決策所需的洞察", "majors": "傳播、資工、統計"}]}, {"id": 30, "name": "教育訓練產業", "jobs": [{"id": 88, "name": "高階主管敘事教練", "description": "協助領導人把策略、價值與決策說成能凝聚團隊的故事", "majors": "教育、傳播、中文"}, {"id": 89, "name": "跨域簡報體驗設計師", "description": "把研究、數據與商業內容轉成不同受眾都能理解的簡報體驗", "majors": "設計、傳播、企管"}, {"id": 90, "name": "AI時代溝通促進師", "description": "訓練組織在AI協作、跨部門與危機情境下，清楚溝通與共同決策", "majors": "教育、傳播、人資"}]}]}];
+const styleMap = [
+ {ring:'#ff7676', ink:'#f07178', accent:'#ff9b2f', icon:'chip'},
+ {ring:'#5aa9f4', ink:'#5aa9f4', accent:'#f29f6b', icon:'shield'},
+ {ring:'#4eb6b1', ink:'#4eb6b1', accent:'#f4b01f', icon:'talk'},
+ {ring:'#f2a63a', ink:'#f2a63a', accent:'#e17f00', icon:'biotech'},
+ {ring:'#9270d1', ink:'#9270d1', accent:'#ef4444', icon:'globe'},
+ {ring:'#efc12b', ink:'#efc12b', accent:'#333333', icon:'balance'},
+ {ring:'#47b7f0', ink:'#47b7f0', accent:'#f38d8d', icon:'card'},
+ {ring:'#93a8b5', ink:'#4a4a4a', accent:'#f87171', icon:'vehicle'},
+ {ring:'#72c075', ink:'#72c075', accent:'#f58f8f', icon:'sprout'},
+ {ring:'#ff8456', ink:'#333333', accent:'#333333', icon:'users'}
+];
+function svgIcon(type,c,a){
+  const icons = {
+    chip:`<svg viewBox="0 0 64 64"><circle cx="28" cy="30" r="15" fill="${c}" opacity=".16"/><path d="M32 18c8 0 14 6 14 14s-6 14-14 14" fill="none" stroke="${c}" stroke-width="5"/><path d="M24 20h12v24H24z" fill="none" stroke="${c}" stroke-width="4"/><path d="M22 44h16" stroke="${c}" stroke-width="4"/><circle cx="22" cy="18" r="8" fill="${a}"/><path d="M18 18l3 3 6-7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    shield:`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="none" stroke="${c}" stroke-width="4"/><rect x="24" y="24" width="16" height="16" rx="2" fill="#fff" stroke="${c}" stroke-width="3"/><path d="M32 21v22M21 32h22" stroke="${c}" stroke-width="3"/><rect x="28" y="28" width="8" height="8" fill="${a}" opacity=".7"/></svg>`,
+    talk:`<svg viewBox="0 0 64 64"><circle cx="28" cy="27" r="14" fill="${c}"/><path d="M20 37l-1 9 9-5" fill="${c}"/><path d="M41 18c7 0 12 5 12 11s-5 11-12 11" fill="none" stroke="${a}" stroke-width="5"/><path d="M46 20v18" stroke="${a}" stroke-width="4" stroke-linecap="round"/><circle cx="23" cy="23" r="2" fill="#fff"/><circle cx="28" cy="28" r="2" fill="#fff"/></svg>`,
+    biotech:`<svg viewBox="0 0 64 64"><path d="M24 10c14 7 14 37 0 44" stroke="${c}" stroke-width="4" fill="none"/><path d="M40 10c-14 7-14 37 0 44" stroke="${c}" stroke-width="4" fill="none"/><path d="M22 18h20M18 28h28M18 38h28M22 48h20" stroke="${a}" stroke-width="4"/><circle cx="18" cy="28" r="2.6" fill="${a}"/><circle cx="46" cy="38" r="2.6" fill="${a}"/></svg>`,
+    globe:`<svg viewBox="0 0 64 64"><path d="M23 10l10 23-10 21h7l7-17 7 17h8L44 33 54 10h-8l-8 18-8-18h-7z" fill="${c}"/><circle cx="39" cy="38" r="6" fill="${a}"/></svg>`,
+    balance:`<svg viewBox="0 0 64 64"><circle cx="32" cy="20" r="11" fill="#333"/><path d="M32 30v18" stroke="${a}" stroke-width="4"/><path d="M19 36h26" stroke="${a}" stroke-width="4"/><path d="M20 36l-7 7h14l-7-7zM44 36l-7 7h14l-7-7z" fill="${a}"/></svg>`,
+    card:`<svg viewBox="0 0 64 64"><rect x="12" y="18" width="40" height="28" rx="4" fill="${c}"/><circle cx="42" cy="34" r="5" fill="#fff"/><circle cx="37" cy="31" r="5" fill="${a}" opacity=".85"/></svg>`,
+    vehicle:`<svg viewBox="0 0 64 64"><rect x="18" y="24" width="25" height="12" rx="2" fill="${c}"/><path d="M16 36h30l4 8H12l4-8z" fill="${c}"/><circle cx="22" cy="46" r="5" fill="${a}"/><circle cx="42" cy="46" r="5" fill="${a}"/><path d="M27 19h10" stroke="#9ca3af" stroke-width="4"/><path d="M28 15h8" stroke="#9ca3af" stroke-width="4"/></svg>`,
+    sprout:`<svg viewBox="0 0 64 64"><path d="M32 17v30" stroke="#999" stroke-width="2"/><path d="M31 21c-7 1-12 7-12 14 6-1 11-5 12-14z" fill="${a}"/><path d="M33 21c7 1 12 7 12 14-6-1-11-5-12-14z" fill="#d7efda"/><path d="M16 42h32l-6-9H22z" fill="${a}"/></svg>`,
+    users:`<svg viewBox="0 0 64 64"><circle cx="24" cy="22" r="7" fill="${c}"/><circle cx="40" cy="22" r="7" fill="${c}"/><path d="M14 44c0-8 6-13 12-13s12 5 12 13" fill="${c}"/><path d="M26 44c0-8 6-13 12-13s12 5 12 13" fill="${c}"/></svg>`
+  };
+  return icons[type];
+}
+const grid=document.getElementById('grid');
+const detail=document.getElementById('detail');
+function drawGrid(){
+  DATA.forEach((item,idx)=>{
+    const s=styleMap[idx];
+    const wrap=document.createElement('div');
+    wrap.className='item pos'+(idx+1);
+    wrap.innerHTML=`<button type="button" class="bubble" style="--ring:${s.ring}" aria-label="${item.name}"><div class="icon">${svgIcon(s.icon,s.ink,s.accent)}</div></button><div class="label" style="color:${s.ring}">${item.name}</div>`;
+    wrap.querySelector('.bubble').addEventListener('click',()=>openDetail(idx));
+    grid.appendChild(wrap);
+  });
+}
+function openDetail(idx){
+  document.querySelectorAll('.bubble').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  const t=DATA[idx];
+  detail.classList.add('show');
+  document.getElementById('counter').textContent=`未來人才 ${String(idx+1).padStart(2,'0')} / 10`;
+  document.getElementById('talentTitle').textContent=t.name;
+  document.getElementById('talentHeadline').textContent=t.headline;
+  document.getElementById('talentScene').textContent=t.scenario;
+  const tabs=document.getElementById('tabs'); tabs.innerHTML='';
+  t.sectors.forEach((sector,sidx)=>{
+    const btn=document.createElement('button');
+    btn.type='button'; btn.className='tab'+(sidx===0?' active':''); btn.textContent=sector.name;
+    btn.addEventListener('click',()=>renderSector(t,sidx)); tabs.appendChild(btn);
+  });
+  renderSector(t,0);
+  detail.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderSector(item,sidx){
+  document.querySelectorAll('#tabs .tab').forEach((el,i)=>el.classList.toggle('active',i===sidx));
+  const s=item.sectors[sidx];
+  document.getElementById('industryPanel').innerHTML=`<div class="industryTitle">產業 ${s.id}｜${s.name}</div><div class="jobs">${s.jobs.map(job=>`<article class="job"><div class="jobTitle">職務 ${job.id}｜${job.name}</div><div class="jobDesc">${job.description||''}</div><div class="jobMajor">${job.majors ? '相關科系／'+job.majors : ''}</div></article>`).join('')}</div>`;
+}
+document.getElementById('closeBtn').addEventListener('click',()=>{detail.classList.remove('show');document.querySelectorAll('.bubble').forEach(el=>el.classList.remove('active'));});
+drawGrid();
+new ResizeObserver(()=>{const h=document.getElementById('talentMap').getBoundingClientRect().height;window.parent?.postMessage({type:'future-talent-v4-resize',height:h},'*');}).observe(document.getElementById('talentMap'));
+</script>
+</body></html>
